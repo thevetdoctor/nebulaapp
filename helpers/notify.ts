@@ -1,4 +1,7 @@
 import AWS from 'aws-sdk';
+import dotenv from 'dotenv'
+
+dotenv.config();
 
 const apiGateway = new AWS.ApiGatewayManagementApi({
   region: process.env.AWS_REGION || 'eu-north-1',

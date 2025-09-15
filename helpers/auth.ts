@@ -8,6 +8,9 @@ import {
   SignUpCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
 import crypto from 'crypto';
+import dotenv from 'dotenv'
+
+dotenv.config();
 
 const REGION = process.env.AWS_REGION || 'eu-north-1';
 const client = new CognitoIdentityProviderClient({ region: REGION });
