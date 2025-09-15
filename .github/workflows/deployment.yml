@@ -1,0 +1,44 @@
+name: Nebula App
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+
+  docker_build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Check working directory
+        run: ls -la
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: ./
+          file: ./Dockerfile
+          push: true
+          tags: |
+            registry.timeguard.ng/nebulaapp:latest
+            registry.timeguard.ng/nebulaapp:${{ github.sha }}
+          
+      - name: Deployment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          script: |
+            cd ~/
+            whoami
+            bash setup-nebulaapp.sh
+            exit
+      
