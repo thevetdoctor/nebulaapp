@@ -1,0 +1,15 @@
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/app.handler
+      Runtime: nodejs20.x
+      CodeUri: HelloWorldFunction
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: get
+    Metadata:
+      SamResourceId: HelloWorldFunction
