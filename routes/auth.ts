@@ -31,7 +31,9 @@ router.post('/register', async (req: Request, res: Response) => {
   } catch (err: any) {
     console.error(err.message);
     const msg = err?.message || JSON.stringify(err);
-    return res.status(500).json({ success: false, message: `Signup failed: ${err.message}`});
+    return res
+      .status(500)
+      .json({ success: false, message: `Signup failed: ${err.message}` });
   }
 });
 
@@ -81,7 +83,9 @@ router.post('/confirm', async (req, res) => {
   try {
     const { username, code } = req.body;
     if (!username || !code)
-      return res.status(400).json({ success: false, message: 'username and code required' });
+      return res
+        .status(400)
+        .json({ success: false, message: 'username and code required' });
 
     await confirmUserBySelf(username, code);
     return res.status(200).json({

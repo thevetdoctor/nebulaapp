@@ -1,17 +1,13 @@
 import AWS from 'aws-sdk';
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 
 dotenv.config();
 
 const apiGateway = new AWS.ApiGatewayManagementApi({
   region: process.env.AWS_REGION || 'eu-north-1',
-  endpoint:
-    process.env.WEBSOCKET_ENDPOINT ||
-    '',
+  endpoint: process.env.WEBSOCKET_ENDPOINT || '',
   accessKeyId: process.env.AWS_ACCESS_KEY_ID! || '',
-  secretAccessKey:
-    process.env.AWS_SECRET_ACCESS_KEY! ||
-    '',
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY! || '',
 });
 
 interface User {

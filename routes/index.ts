@@ -1,6 +1,7 @@
 import {
   DeleteCommand,
   PutCommand,
+  QueryCommand,
   ScanCommand,
   ScanCommandInput,
 } from '@aws-sdk/lib-dynamodb';
@@ -22,7 +23,7 @@ router.post('/score', async (req: Request, res: Response) => {
         .json({ message: 'user_id, user_name and score required' });
     const connectionId = req.headers['connectionid'] as string;
     if (!connectionId) {
-       return res
+      return res
         .status(400)
         .json({ message: 'Connection ID is required, please reconnect' });
     }
@@ -52,7 +53,10 @@ router.post('/score', async (req: Request, res: Response) => {
     return res.status(201).json({ success: true, item });
   } catch (err: any) {
     console.error('Error saving score:', err.message);
-    return res.status(500).json({ success: false, message: `Failed to save score: ${err.message}` });
+    return res.status(500).json({
+      success: false,
+      message: `Failed to save score: ${err.message}`,
+    });
   }
 });
 
@@ -74,10 +78,15 @@ router.delete('/score/:id', async (req: Request, res: Response) => {
       }),
     );
 
-    return res.status(200).json({ success: true, message: 'Score deleted successfully' });
+    return res
+      .status(200)
+      .json({ success: true, message: 'Score deleted successfully' });
   } catch (err: any) {
     console.error('Error deleting score:', err);
-    return res.status(500).json({ success: false, message: `Failed to delete score: ${err.message}` });
+    return res.status(500).json({
+      success: false,
+      message: `Failed to delete score: ${err.message}`,
+    });
   }
 });
 
@@ -113,6 +122,26 @@ router.get('/all', async (req: Request, res: Response) => {
       TableName: TABLE_NAME,
       Select: 'COUNT',
     };
+
+    // const paramss = {
+    //   TableName: TABLE_NAME,
+    //   IndexName: 'GlobalTimestampIndex',
+    //   KeyConditionExpression: 'globalPK = :g',
+    //   ExpressionAttributeValues: { ':g': 'GLOBAL' },
+    //   ScanIndexForward: false, // descending (latest first)
+    //   Limit: 20,
+    // };
+
+    // if (lastKey && lastKey !== 'undefined') {
+    //   try {
+    //     params.ExclusiveStartKey = JSON.parse(lastKey as string);
+    //   } catch (err) {
+    //     console.error('Invalid lastKey JSON:', lastKey, err);
+    //   }
+    // }
+
+    // const result = await ddbDocClient.send(new QueryCommand(paramss));
+    // console.log(result);
 
     const countData = await ddbDocClient.send(new ScanCommand(countParams));
     const totalCount = countData.Count ?? 0;

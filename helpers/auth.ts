@@ -8,20 +8,16 @@ import {
   SignUpCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
 import crypto from 'crypto';
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 
 dotenv.config();
 
 const REGION = process.env.AWS_REGION || 'eu-north-1';
 const client = new CognitoIdentityProviderClient({ region: REGION });
 
-const USER_POOL_ID =
-  process.env.COGNITO_USER_POOL_ID! || '';
-const CLIENT_ID =
-  process.env.COGNITO_CLIENT_ID! || '';
-const CLIENT_SECRET =
-  process.env.COGNITO_CLIENT_SECRET ||
-  '';
+const USER_POOL_ID = process.env.COGNITO_USER_POOL_ID! || '';
+const CLIENT_ID = process.env.COGNITO_CLIENT_ID! || '';
+const CLIENT_SECRET = process.env.COGNITO_CLIENT_SECRET || '';
 
 function computeSecretHash(username: string) {
   if (!CLIENT_SECRET) return undefined;
