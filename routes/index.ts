@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { ddbDocClient } from '../database/index';
 import { notifyUserIfHighScore } from '../helpers/notify';
+import { LeaderboardItem } from '../helpers/util';
 
 const router = express.Router();
 const TABLE_NAME = process.env.LEADERBOARD_TABLE! || 'leaderboard';
@@ -111,11 +112,12 @@ router.get('/top', async (req: Request, res: Response) => {
 
 router.get('/all', async (req: Request, res: Response) => {
   try {
-    const { limit, lastKey } = req.query;
+    const { limit, lastKey, page } = req.query;
     const limitNum = parseInt(limit as string, 10) || 5;
+    const pageNum = parseInt(page as string, 10) || 1;
     const params: ScanCommandInput = {
       TableName: TABLE_NAME,
-      Limit: limitNum,
+      // Limit: limitNum,
     };
 
     const countParams: ScanCommandInput = {
@@ -150,7 +152,11 @@ router.get('/all', async (req: Request, res: Response) => {
       params.ExclusiveStartKey = JSON.parse(lastKey as string);
     }
     const data = await ddbDocClient.send(new ScanCommand(params));
-    const top = data.Items || [];
+    // const top = data.Items || [];
+    const top =
+      (data.Items as unknown as LeaderboardItem)
+        .sort((a: { score: number }, b: { score: number }) => a.score - b.score)
+        .slice(((pageNum - 1) * limitNum), limitNum * pageNum) || [];
 
     return res.status(200).json({
       data: top,

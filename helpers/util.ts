@@ -53,3 +53,8 @@ export const responseObj = (
     message,
   });
 };
+
+export interface LeaderboardItem {
+  score: number;
+  [key: string]: any;
+}
